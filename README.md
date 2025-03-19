@@ -2,7 +2,8 @@
 
 A simple and elegant weather app built using the [WeatherAPI](https://www.weatherapi.com/). This app provides real-time weather information for any city worldwide, including temperature, weather condition, humidity, and wind speed.
 
-![Weather App Screenshot]
+Weather App Screenshot
+
 ![image](https://github.com/user-attachments/assets/2685b839-c43e-4291-baa1-9d82bf8460f8)
 
 ---
