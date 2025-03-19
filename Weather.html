@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      width: 70%;
+      margin-right: 10px;
+      font-size: 1rem;
+      outline: none;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #00b894;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #00997b;
+    }
+
+    .weather-card {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      animation: slideIn 0.5s ease-in-out;
+    }
+
+    .weather-card h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .weather-card p {
+      margin: 10px 0;
+      font-size: 1.2rem;
+      color: #e0e0e0;
+    }
+
+    .weather-icon {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      animation: bounce 2s infinite;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Weather App</h1>
+    <form id="weatherForm">
+      <input type="text" id="cityInput" placeholder="Enter city name" required>
+      <button type="submit">Get Weather</button>
+    </form>
+    <div id="weatherResult" class="weather-card">
+      <!-- Weather data will be displayed here -->
+    </div>
+  </div>
+
+  <script>
+    const apiKey = "39b770cdb1dc4d27b9e12807251903"; // Replace with your API key
+    const apiUrl = "http://api.weatherapi.com/v1/current.json";
+
+    document.getElementById("weatherForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const city = document.getElementById("cityInput").value;
+      fetchWeather(city);
+    });
+
+    async function fetchWeather(city) {
+      try {
+        const response = await fetch(`${apiUrl}?key=${apiKey}&q=${city}&aqi=yes`);
+        const data = await response.json();
+
+        if (response.ok) {
+          displayWeather(data);
+        } else {
+          alert("City not found. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error fetching weather data:", error);
+        alert("An error occurred. Please try again later.");
+      }
+    }
+
+    function displayWeather(data) {
+      const weatherResult = document.getElementById("weatherResult");
+      const { name, region, country } = data.location;
+      const { temp_c, condition, humidity, wind_kph } = data.current;
+
+      // Weather icon based on condition
+      const icon = getWeatherIcon(condition.text);
+
+      weatherResult.innerHTML = `
+        <div class="weather-icon">${icon}</div>
+        <h2>${name}, ${region}, ${country}</h2>
+        <p><strong>Temperature:</strong> ${temp_c}°C</p>
+        <p><strong>Condition:</strong> ${condition.text}</p>
+        <p><strong>Humidity:</strong> ${humidity}%</p>
+        <p><strong>Wind Speed:</strong> ${wind_kph} km/h</p>
+      `;
+    }
+
+    function getWeatherIcon(condition) {
+      const icons = {
+        Sunny: "☀️",
+        Clear: "🌙",
+        Cloudy: "☁️",
+        Rain: "🌧️",
+        Snow: "❄️",
+        Thunderstorm: "⛈️",
+        Mist: "🌫️",
+      };
+      return icons[condition] || "🌍";
+    }
+  </script>
+</body>
+</html>
